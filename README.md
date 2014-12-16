@@ -23,6 +23,10 @@ $ bower install lang-def
 
 #Usage
 ```node
+def([ string name ], [ array mixins ], [ function baseClass ], [ object props ])
+```
+
+```node
 var def = require('lang-def')
 
 var Eatable = def({
