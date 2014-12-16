@@ -1,0 +1,28 @@
+{
+  "name": "lang-def",
+  "version": "0.0.0",
+  "description": "Lightweight utility module for creating javascript classes.",
+  "main": "def.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/sapienlab/lang-def.git"
+  },
+  "keywords": [
+    "oop",
+    "class",
+    "oo",
+    "lang"
+  ],
+  "author": "Rodrigo Gonzalez <rodrigo@sapienlab.com> (http://github.com/roro89)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sapienlab/lang-def/issues"
+  },
+  "homepage": "https://github.com/sapienlab/lang-def"
+}
