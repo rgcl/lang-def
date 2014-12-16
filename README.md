@@ -23,7 +23,7 @@ $ bower install lang-def
 
 #Usage
 ```node
-def([ string name ], [ array mixins ], [ function baseClass ], [ object props ])
+def([ string name ], [ function baseClass ], [ array mixins ], [ object props ])
 ```
 
 ```node
