@@ -62,9 +62,9 @@ guy.speak()
 
 guy instanceof Person
 // -> true
-guy instanceOf Animal
+guy instanceof Animal
 // -> true
-guy instanceOf Eatable
+guy instanceof Eatable
 // -> false (because Eatable is a mixin)
 
 // Define a robot behavior
@@ -81,11 +81,26 @@ var monster = new MecaAnimal()
 monster.fireFire()
 // -> 'FIRE FIRE JSDHKJDHJSKHKJSAHK FIRE FIRE'
 
+// Inheriting/mixin with a vanilla Javascript class
+function Super(level) {
+	this.level = level
+}
+
+var SuperMecaAnimal = def(MecaAnimal, [Super]);
+var SuperWololo = def(Super, [Robot] {
+	fireFire: function() {
+		console.log('Wololo Wololo level ' + this.level);
+	}
+})
+
 ```
 
 #TODO
-[ ] Testing (travis)
-[ ] Document the API
+- [x] Experimenting
+- [x] Writing the code
+- [x] Anecdotally Testing
+- [ ] Automated Testing on Travis
+- [ ] Documenting the API
 
 #LICENSE
 MIT LICENSE

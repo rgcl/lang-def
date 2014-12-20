@@ -1,4 +1,4 @@
-// based on https://github.com/umdjs/umd/blob/master/returnExports.js
+// wraper based on https://github.com/umdjs/umd/blob/master/returnExports.js
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
         define([], factory);
@@ -13,40 +13,63 @@
 	var def = function def(arg0, arg1, arg2, arg3) {
 		// 0. Normalize arguments
 		var args = normalizeArguments(arg0, arg1, arg2, arg3),
-			new_ = (args.props && args.props.new) || function () {},
-			proto = {},
 			props = args.props,
+			new_ = (props && props['new']) || function () {},
+			proto = {},
+			name = args.name,
 	 		mixins = args.mixins,
+	 		constructor,
 	 		mixinProto;
-	 	(props && (delete props.new));
-	 	// 1. Inherits
-	 	if(args.parent) {
-	 		def.inherits(new_, args.parent);
+	 	props && (delete props.new);
+	 	// 1. Create the constructor
+	 	if(!name) {
+	 		constructor = function AnonymousConstructor() {
+	 			if(!(this instanceof AnonymousConstructor)) {
+	 				throw new TypeError("use new Constructor(...)");
+	 			}
+	 			new_.apply(this, arguments);
+	 		};
+	 	} else {
+	 		// If the name is important for you, then this is the best performance way.
+	 		// And... yes, "The Function constructor is a form of eval."
+	 		constructor = (new Function('new_', 
+	 			'return function ' + name + '() {' +
+	 			' if(!(this instanceof ' + name + ')) {' +
+	 			' throw new TypeError("use new ' + name + '(...)");' +
+	 			'} new_.apply(this, arguments); }'))(new_);
 	 	}
-	 	// 2. Mixin with mixins
+	 	constructor.mixins_ = {};
+	 	// 2. Inherits
+	 	if(args.parent) {
+	 		def.inherits(constructor, args.parent);
+	 	}
+	 	// 3. Mixin with mixins
 	 	mixins.forEach(function (mixin) {
 	 		mixinProto = mixin.prototype;
 	 		for(var key in mixinProto) {
 	 			proto[key] = mixinProto[key];
 	 		}
+	 		if(mixinProto.constructor.name) {
+	 			constructor.mixins_[mixinProto.constructor.name] = true;
+	 		}
 	 	});
-	 	// 3. Mixin with props
+	 	// 4. Mixin with props
 	 	if(props) {
 	 		for(var key in props) {
 	 			proto[key] = props[key];
 	 		}
 	 	}
-	 	// 4. Asign proto
+	 	// 5. Asign proto
 	 	for(var keyProto in proto) {
-	 		new_.prototype[keyProto] = proto[keyProto];
+	 		constructor.prototype[keyProto] = proto[keyProto];
 	 	}
-	 	new_.prototype.super = function (method, args) {
+	 	constructor.prototype.super = function (method, args) {
 	 		if(this.super_ && this.super_[method]) {
 				return this.super_[method].apply(this, args);
 	 		}
 	 	};
-	 	// 5. Return!
-	 	return new_;
+	 	// 6. Return!
+	 	return constructor;
 	};
 
 	// Inject the inherits depending of the environment
@@ -78,18 +101,20 @@
 		}
 	}
 
-	// Inject mixinOf
-	// TODO
-	def.mixinOf = function(Class, Mixin) {
-		if(!Class._mixins_) {
+	def.mixinOf = function(instance, Mixin) {
+		if(!instance._mixins_) {
 			return false;
 		}
-		return Class._mixins_[Mixin];
-	}
+		return !!instance.mixins_[Mixin.name];
+	};
+
+	def.instanceOf = function(instance, ClassOrMixin) {
+		return (instance instanceof ClassOrMixin) ||
+			def.mixinOf(instance, ClassOrMixin);
+	};
 
 	// normalizeArguments([string name] [, function parent] [, array mixins] [, object props])
 	function normalizeArguments(arg0, arg1, arg2, arg3) {
-		console.log('normalizeArguments:inputs', arguments);
 		// v8 hidden classes
 		var args = { name: '', parent: null, mixins: [], props: null };
 		if(!arg0) {
