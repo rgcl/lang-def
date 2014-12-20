@@ -1,13 +1,13 @@
 {
   "name": "lang-def",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Lightweight utility module for creating javascript classes.",
   "main": "def.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test/*"
+    "test": "mocha --reporters nyan test/*"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/sapienlab/lang-def/issues"
   },
-  "homepage": "https://github.com/sapienlab/lang-def"
+  "homepage": "https://github.com/sapienlab/lang-def",
+  "devDependencies": {
+    "mocha": "^2.0.1"
+  }
 }
