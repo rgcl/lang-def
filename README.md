@@ -3,6 +3,9 @@
 #lang-def
 Lightweight utility module for creating javascript *classes*.
 
+[!standards](http://imgs.xkcd.com/comics/standards.png)
+> copyright [xkcd](http://xkcd.com/927/)
+
 #Features
 * Great performance.
 * Works in node.js and browsers (In node use native [inherits](http://nodejs.org/docs/latest/api/util.html#util_util_inherits_constructor_superconstructor) for performance).
