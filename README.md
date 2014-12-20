@@ -228,11 +228,11 @@ def.instanceOf(object instance, function MixinOrClass) -> bool
 - To define *static* properties add them to the constructor. i.e. `XHR = def(...); XHR.TYPE_OK = 1; XHR.TYPE_ERR = 0`.
 
 #TODO
-- [x] Experimenting
-- [x] Writing the code
-- [x] Anecdotally Testing
-- [ ] Automated Testing on Travis
-- [ ] Documenting the API
+- [x] Experimenting................100%
+- [x] Writing the code.............100%
+- [x] Anecdotally Testing..........100%
+- [ ] Automated Testing on Travis..35%
+- [x] Documenting the API..........80%
 
 #LICENSE
 MIT LICENSE
