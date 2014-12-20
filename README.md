@@ -3,7 +3,7 @@
 #lang-def
 Lightweight utility module for creating javascript *classes*.
 
-[!standards](http://imgs.xkcd.com/comics/standards.png)
+![standards](http://imgs.xkcd.com/comics/standards.png)
 > copyright [xkcd](http://xkcd.com/927/)
 
 #Features
