@@ -8,7 +8,7 @@ Lightweight utility module for creating javascript *classes*.
 #Features
 - Great performance.
 - Works in node.js and browsers
-  - In the node.js use the native [inherits](http://nodejs.org/docs/latest/api/util.html#util_util_inherits_constructor_superconstructor).
+  - In node.js use the native [inherits](http://nodejs.org/docs/latest/api/util.html#util_util_inherits_constructor_superconstructor).
   - Use ES5 if is available, or the legacy way in legacy environment (cough cough IE<9).
 - Support to classic inhiterance.
 - Support to mixins.
@@ -40,14 +40,17 @@ a.distance(b);
 ```
 
 #Installation
-With [npm][]:
+[npm][]:
 ```sh
 $ npm install lang-def
 ```
-With [bower][]:
+[bower][]:
 ```sh
 $ bower install lang-def
 ```
+
+Or simply [download](https://github.com/sapienlab/lang-def/archive/master.zip).
+
 ##Import
 
 ###In CommonJS (like node.js)
@@ -75,10 +78,14 @@ require(['def'], function (def) {
 	// use window.def or simply def
 </script>
 ```
-#Usage
+#API
+##def
+Creates a constructor function (*Class*).
+
 Signature:
 ```node
-def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ]) -> Function
+def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ])
+ -> Function
 ```
 - *optional string* **name**:
 	- The name of the class. Useful for debugging.
@@ -97,86 +104,125 @@ def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ])
 		- Currently no work well for DOM Interfaces, like HTMLDivElement.
 - *optional array* **mixins**:
 	- An array of constructor functions that is *mixed* from left to right (the right overrides the left).
-	- default: []
+	- default: [ ]
 	- limitations:
-		- The same of the **BaseClass**.
+		- The same of **BaseClass**.
 - *optional object* **props**:
 	- The properties or members of the Class to create.
-	- default: {}
+	- default: { }
 	- especial members:
 		- *optional function* **new**: is the `constructor`.
+			- default: `function () { def.mixin(this, arguments); }`.
+		- (in each method) **this.super(string method [ array|array like, arguments])**:
+			- to invoke the parent method with the given arguments.
 	- limitations:
 		- Must not contain one of the follows special members: **mixins_**, **super_** and **super**.
 
 #Examples
-```node
-var def = require('lang-def')
+A little Game Egine
+```javascript
+// (See Quick Example for definition of Point)
 
-var Eatable = def({
-	eat: function () {
-		console.log('yummy!')
+// GameEntity have all members of Point
+var GameEntity = def([Point], {
+	onUpdate: function(deltaTime) { },
+	onCollision: function(entity) {},
+	onRender: function (ctx) {
+		ctx.save()
+		ctx.rect(...)
+		...
+		ctx.pop()
 	}
-});
+})
 
-// Animal mixin with Eatable
-var Animal = def([Eatable], {
-	new: function(sex) {
-		this.sex = sex;
-	}
-});
-
-// Person extends from Animal
-var Person = def(Animal, {
-	// constructor
-	new: function(name, sex) {
-		this.super('new', [sex]);
-		this.name = name;
+// Player inherits from GameEntity
+var Player = def(GameEntity, {
+	live: 3,
+	onUpdate: function(deltaTime) {
+		if(...) {
+			this.x += 0.5 * deltaTime
+		}
+		...
 	},
-	speak: function () {
-		console.log("Hi! I'am " + this.name)
-	}
-});
-
-var guy = new Person('Bob', 'm');
-guy.eat()
-// -> yummy!
-guy.speak()
-// -> Hi! I'am Bob
-
-guy instanceof Person
-// -> true
-guy instanceof Animal
-// -> true
-guy instanceof Eatable
-// -> false (because Eatable is a mixin)
-
-// Define a robot behavior
-var Robot = def({
-	fireFire: function () {
-		console.log('FIRE FIRE JSDHKJDHJSKHKJSAHK FIRE FIRE')
+	onCollision: function(entity) {
+		if(entity instanceof Mushroom) {
+			this.live++;
+		} else if(entity instanceof Enemy) {
+			this.live--;
+		}
 	}
 })
 
-// Define a robot that can eat
-var MecaAnimal = def([Eatable, Robot])
-
-var monster = new MecaAnimal()
-monster.fireFire()
-// -> 'FIRE FIRE JSDHKJDHJSKHKJSAHK FIRE FIRE'
-
-// Inheriting/mixin with a vanilla Javascript class
-function Super(level) {
-	this.level = level
-}
-
-var SuperMecaAnimal = def(MecaAnimal, [Super]);
-var SuperWololo = def(Super, [Robot] {
-	fireFire: function() {
-		console.log('Wololo Wololo level ' + this.level);
+// Setting the location on instantiate time
+var RandomConstructor = def({
+	new: function() {
+		this.x = Math.random() * 800
+		this.y = Math.random() * 600
 	}
 })
+
+// Enemy and Mushroom inherits from GameEntity
+// and have a random location
+var Enemy = def(GameEntity, [RandomConstructor])
+var Mushroom = def(GameEntity, [RandomConstructor])
+
+var hero = new Player({ x: 25, y: 25 })
+
+// define a Game
+var Game = def({ ... })
+
+var game = new Game({
+	width: 800,
+	height: 600,
+	player: new Payer
+})
+
+game.play()
+
+// Add enemies and food each 5s.
+setInterval(function() {
+	game.add(new Enemy)
+	game.add(new Mushroom)
+}, 5000)
 
 ```
+##def.mixinOf
+Check if instance is mixin of Mixin.
+
+Signature:
+```javascript
+def.mixinOf(object instance, function Mixin) -> bool
+```
+- *object* **instance**
+- *function* **Mixin**
+
+##def.instanceOf
+Check if instance is mixin of Mixin.
+
+Signature:
+```javascript
+def.instanceOf(object instance, function MixinOrClass) -> bool
+```
+- *object* **instance**
+- *function* **MixinOrClass**
+
+##def.mixin
+Mixin **arg0** with **arg1**, then with *arg2* (if exits), etc.
+
+Signature:
+```javascript
+def.mixin(object arg0 [, object arg1 [, ... ]]) -> object
+```
+- *object* **arg0**
+- ...
+
+The **arg0** object is mutated and returned.
+
+#Best  Practies
+- Use the conventional prefix `_` for private members. Example `_lastPosition: 5`.
+	> We can over engineering this lib for have a real *private* concept, but
+	> then we like some way for made reflection... so, [KISS](http://en.wikipedia.org/wiki/KISS_principle) is the better.
+- Feel free for use `def` with vanilla constructor functions and in library proyects. `def` just construct a vanilla constructor, so is not intrusive.
 
 #TODO
 - [x] Experimenting

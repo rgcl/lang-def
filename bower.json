@@ -1,7 +1,7 @@
 {
   "name": "lang-def",
   "main": "def.js",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "authors": [
     "Rodrigo Gonzalez <rodrigo@sapienlab.com> (http://github.com/roro89)"
   ],

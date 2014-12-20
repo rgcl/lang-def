@@ -14,7 +14,7 @@
 		// 0. Normalize arguments
 		var args = normalizeArguments(arg0, arg1, arg2, arg3),
 			props = args.props,
-			new_ = (props && props['new']) || function () {},
+			new_ = (props && props['new']) || function () { def.mixin(this, arguments); },
 			proto = {},
 			name = args.name,
 	 		mixins = args.mixins,
@@ -101,16 +101,32 @@
 		}
 	}
 
-	def.mixinOf = function(instance, Mixin) {
+	def.mixinOf = function def_mixinOf(instance, Mixin) {
 		if(!instance._mixins_) {
 			return false;
 		}
 		return !!instance.mixins_[Mixin.name];
 	};
 
-	def.instanceOf = function(instance, ClassOrMixin) {
+	def.instanceOf = function def_instanceOf(instance, ClassOrMixin) {
 		return (instance instanceof ClassOrMixin) ||
 			def.mixinOf(instance, ClassOrMixin);
+	};
+
+	def.mixin = function def_mixin() {
+		var objects = arguments,
+			result = objects[0],
+			length = objects.length,
+			object;
+		for(var i = 1; i < length; i++) {
+			object = objects[i];
+			for(var key in object) {
+				if(object.hasOwnProperty(key)) {
+					result[key] = object[key];
+				}
+			}
+		}
+		return result;
 	};
 
 	// normalizeArguments([string name] [, function parent] [, array mixins] [, object props])
