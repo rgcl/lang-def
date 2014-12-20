@@ -1,13 +1,13 @@
 {
   "name": "lang-def",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Lightweight utility module for creating javascript classes.",
   "main": "def.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha --reporters nyan test/*"
+    "test": "mocha --R nyan test/*"
   },
   "repository": {
     "type": "git",

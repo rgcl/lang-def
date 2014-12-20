@@ -25,7 +25,7 @@
 	 	if(!name) {
 	 		constructor = function AnonymousConstructor() {
 	 			if(!(this instanceof AnonymousConstructor)) {
-	 				throw new TypeError("use new Constructor(...)");
+	 				throw new TypeError('use new AnonymousConstructor(...)');
 	 			}
 	 			new_.apply(this, arguments);
 	 		};
@@ -35,7 +35,7 @@
 	 		constructor = (new Function('new_', 
 	 			'return function ' + name + '() {' +
 	 			' if(!(this instanceof ' + name + ')) {' +
-	 			' throw new TypeError("use new ' + name + '(...)");' +
+	 			' throw new TypeError(\'use new ' + name + '(...)\');' +
 	 			'} new_.apply(this, arguments); }'))(new_);
 	 	}
 	 	constructor.mixins_ = {};
