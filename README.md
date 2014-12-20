@@ -1,5 +1,7 @@
 
 #lang-def
+![status](https://travis-ci.org/sapienlab/lang-def.svg)
+
 Lightweight utility module for creating javascript *classes*.
 
 ![standards](http://imgs.xkcd.com/comics/standards.png)
@@ -38,6 +40,7 @@ var b = new Point(5, -6)
 a.distance(b);
 // -> 10.44030650891055
 ```
+[jsfiddle.net/d0y6jLv5/](http://jsfiddle.net/d0y6jLv5/)
 
 #Installation
 [npm][]:
@@ -104,12 +107,12 @@ def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ])
 		- Currently no work well for DOM Interfaces, like HTMLDivElement.
 - *optional array* **mixins**:
 	- An array of constructor functions that is *mixed* from left to right (the right overrides the left).
-	- default: [ ]
+	- default: `[ ]`
 	- limitations:
 		- The same of **BaseClass**.
 - *optional object* **props**:
 	- The properties or members of the Class to create.
-	- default: { }
+	- default: `{ }`
 	- especial members:
 		- *optional function* **new**: is the `constructor`.
 			- default: `function () { def.mixin(this, arguments); }`.
@@ -118,7 +121,7 @@ def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ])
 	- limitations:
 		- Must not contain one of the follows special members: **mixins_**, **super_** and **super**.
 
-#Examples
+#Example
 A little Game Egine
 ```javascript
 // (See Quick Example for definition of Point)
@@ -126,7 +129,7 @@ A little Game Egine
 // GameEntity have all members of Point
 var GameEntity = def([Point], {
 	onUpdate: function(deltaTime) { },
-	onCollision: function(entity) {},
+	onCollision: function(entity) { },
 	onRender: function (ctx) {
 		ctx.save()
 		ctx.rect(...)
@@ -186,6 +189,17 @@ setInterval(function() {
 }, 5000)
 
 ```
+##def.mixin
+Mixin **arg0** with **arg1**, then with *arg2* (if exits), etc.
+
+Signature:
+```javascript
+def.mixin(object arg0 [, object arg1 [, ... ]]) -> object
+```
+- *object* **arg0**
+- ...
+
+The **arg0** object is mutated and returned.
 ##def.mixinOf
 Check if instance is mixin of Mixin.
 
@@ -206,23 +220,12 @@ def.instanceOf(object instance, function MixinOrClass) -> bool
 - *object* **instance**
 - *function* **MixinOrClass**
 
-##def.mixin
-Mixin **arg0** with **arg1**, then with *arg2* (if exits), etc.
-
-Signature:
-```javascript
-def.mixin(object arg0 [, object arg1 [, ... ]]) -> object
-```
-- *object* **arg0**
-- ...
-
-The **arg0** object is mutated and returned.
-
-#Best  Practies
+#Best  Practies & Tips
 - Use the conventional prefix `_` for private members. Example `_lastPosition: 5`.
-	> We can over engineering this lib for have a real *private* concept, but
-	> then we like some way for made reflection... so, [KISS](http://en.wikipedia.org/wiki/KISS_principle) is the better.
-- Feel free for use `def` with vanilla constructor functions and in library proyects. `def` just construct a vanilla constructor, so is not intrusive.
+	We can over engineering this lib for have a real *private* concept, but
+	then we like some way for made reflection... so, [KISS](http://en.wikipedia.org/wiki/KISS_principle) is the better.
+- Feel free to use `def` with vanilla constructor functions and in library proyects. `def` just construct a vanilla constructor, so is not intrusive.
+- To define *static* properties add them to the constructor. i.e. `XHR = def(...); XHR.TYPE_OK = 1; XHR.TYPE_ERR = 0`.
 
 #TODO
 - [x] Experimenting
