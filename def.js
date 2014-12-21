@@ -14,7 +14,7 @@
 		// 0. Normalize arguments
 		var args = normalizeArguments(arg0, arg1, arg2, arg3),
 			props = args.props,
-			new_ = (props && props['new']) || function () { def.mixin(this, arguments); },
+			new_ = (props && props['new']) || function (props) { def.mixin(this, props); },
 			proto = {},
 			name = args.name,
 	 		mixins = args.mixins,
@@ -113,7 +113,10 @@
 			def.mixinOf(instance, ClassOrMixin);
 	};
 
-	def.mixin = function def_mixin() {
+	def.mixin = function def_mixin(arg0) {
+		if(arguments.length < 2) {
+			return arg0;
+		}
 		var objects = arguments,
 			result = objects[0],
 			length = objects.length,
