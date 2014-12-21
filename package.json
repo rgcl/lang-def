@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/sapienlab/lang-def",
   "devDependencies": {
-    "mocha": "^2.0.1"
+    "mocha": "2.*"
   }
 }
