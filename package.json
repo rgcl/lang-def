@@ -1,6 +1,6 @@
 {
   "name": "lang-def",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lightweight utility module for creating javascript classes.",
   "main": "def.js",
   "directories": {
@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/sapienlab/lang-def",
   "devDependencies": {
-    "mocha": "2.*"
+    "mocha": "*"
   }
 }
