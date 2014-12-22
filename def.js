@@ -64,13 +64,13 @@
 	 		constructor.prototype[keyProto] = proto[keyProto];
 	 	}
 	 	constructor.prototype.super = function (methodName, args) {
-            var method = this.getSuper(methodName);
+	 		var method = this.getSuper(methodName);
 	 		if(method) {
 				return method.apply(this, args);
 	 		}
 	 	};
 	 	constructor.prototype.getSuper = function (methodName) {
-	 		return this.super_ && this.super_[method];
+	 		return this.constructor.prototype[methodName];
 	 	};
 	 	// 6. Return!
 	 	return constructor;
