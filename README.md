@@ -176,7 +176,7 @@ cat.speak();
 
 ```
 ###Mixins
-Example inspired from (dgrid)[http://dgrid.io/]
+Example inspired from [dgrid](http://dgrid.io/)
 ```javascript
 var Widget = def({ ... });
 var Grid = def(Widget, { ... });
