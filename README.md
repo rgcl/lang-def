@@ -1,6 +1,6 @@
 
 #lang-def
-![status](https://travis-ci.org/sapienlab/lang-def.svg)
+[![status](https://travis-ci.org/sapienlab/lang-def.svg)](https://travis-ci.org/sapienlab/lang-def)
 
 Lightweight utility module for creating javascript *classes*.
 

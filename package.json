@@ -1,6 +1,6 @@
 {
   "name": "lang-def",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Lightweight utility module for creating javascript classes.",
   "main": "def.js",
   "directories": {
