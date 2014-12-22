@@ -46,7 +46,7 @@ var b = new Point(5, -6)
 a.distance(b);
 // -> 10.44030650891055
 ```
-[jsfiddle.net/d0y6jLv5/](http://jsfiddle.net/d0y6jLv5/)
+[`jsfiddle.net/d0y6jLv5/`](http://jsfiddle.net/d0y6jLv5/)
 
 #Installation
 [npm][]:
@@ -132,8 +132,10 @@ def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ])
 
 #Examples
 ##A little Game Egine
+
 ![The vegetarian game](example.png)
-See in [jsfiddle.net/mnrtag0v/8](http://jsfiddle.net/mnrtag0v/8/).
+
+See in [`jsfiddle.net/mnrtag0v/8`](http://jsfiddle.net/mnrtag0v/8/).
 
 ##Classic examples
 ###Inheritance
