@@ -63,10 +63,14 @@
 	 	for(var keyProto in proto) {
 	 		constructor.prototype[keyProto] = proto[keyProto];
 	 	}
-	 	constructor.prototype.super = function (method, args) {
-	 		if(this.super_ && this.super_[method]) {
-				return this.super_[method].apply(this, args);
+	 	constructor.prototype.super = function (methodName, args) {
+            var method = this.getSuper(methodName);
+	 		if(method) {
+				return method.apply(this, args);
 	 		}
+	 	};
+	 	constructor.prototype.getSuper = function (methodName) {
+	 		return this.super_ && this.super_[method];
 	 	};
 	 	// 6. Return!
 	 	return constructor;
