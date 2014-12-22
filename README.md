@@ -7,6 +7,11 @@ Lightweight utility module for creating javascript *classes*.
 ![standards](http://imgs.xkcd.com/comics/standards.png)
 > copyright [xkcd](http://xkcd.com/927/)
 
+Ok, Javascript already uses OOP, but based in prototypes. It is not bad, but occasionally 
+the class system is the best approach. This library help you to create "raw vanilla" 
+Javascript classes, for the best integrating with another codes and libraries with 
+the best performance.
+
 #Features
 - Great performance.
 - Works in node.js and browsers
@@ -15,6 +20,7 @@ Lightweight utility module for creating javascript *classes*.
 - Support to classic inhiterance.
 - Support to mixins.
 - Support to CommonJs (like node.js), AMD (like requireJs) and as vanilla global module.
+- Secure. If you forget to use the "new" operator to instantiate then TypeException is fired, so not fail silently.
 - Elegant API & clean code base.
 
 #Quick Example
@@ -116,81 +122,94 @@ def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ])
 	- especial members:
 		- *optional function* **new**: is the `constructor`.
 			- default: `function () { def.mixin(this, arguments); }`.
-		- (in each method) **this.super(string method [ array|array like, arguments])**:
-			- to invoke the parent method with the given arguments.
+		- (in each method) **this.super(string methodName [, array arguments])**:
+			- to invoke the parent method with the given arguments and return the results.
+		- (in each method) **this.getSuper(string methodName)**
+			- to return the method of the parent *Class*.
 	- limitations:
-		- Must not contain one of the follows special members: **mixins_**, **super_** and **super**.
+		- Must not contain one of the follows special members: 
+		*mixins_*, *super_*, **super** and **getSuper**.
 
-#Example
-A little Game Egine
+#Examples
+##A little Game Egine
+![The vegetarian game](example.png)
+See in [jsfiddle.net/mnrtag0v/8](http://jsfiddle.net/mnrtag0v/8/).
+
+##Classic examples
+###Inheritance
 ```javascript
-// (See Quick Example for definition of Point)
 
-// GameEntity have all members of Point
-var GameEntity = def([Point], {
-	onUpdate: function(deltaTime) { },
-	onCollision: function(entity) { },
-	onRender: function (ctx) {
-		ctx.save()
-		ctx.rect(...)
-		...
-		ctx.pop()
+var Animal = def({
+	name: null,
+	speak: function () { return 'I am ' + this.name; }
+});
+
+var Cat = def(Animal, {
+	speak: function() {
+		return this.super('speak') + ', the Cat';
 	}
-})
+});
 
-// Player inherits from GameEntity
-var Player = def(GameEntity, {
-	live: 3,
-	onUpdate: function(deltaTime) {
-		if(...) {
-			this.x += 0.5 * deltaTime
-		}
-		...
-	},
-	onCollision: function(entity) {
-		if(entity instanceof Mushroom) {
-			this.live++;
-		} else if(entity instanceof Enemy) {
-			this.live--;
-		}
+var Dog = def(Animal, {
+	speak: function() {
+		return this.super('speak') + ', the Dog';
 	}
-})
+});
 
-// Setting the location on instantiate time
-var RandomConstructor = def({
-	new: function() {
-		this.x = Math.random() * 800
-		this.y = Math.random() * 600
-	}
-})
+var cat = new Cat({ name: 'Canela' });
+var dog = new Dog({ name: 'Doky' });
 
-// Enemy and Mushroom inherits from GameEntity
-// and have a random location
-var Enemy = def(GameEntity, [RandomConstructor])
-var Mushroom = def(GameEntity, [RandomConstructor])
+cat instanceof Cat;
+// -> true
+cat instanceof Animal;
+// -> true
 
-var hero = new Player({ x: 25, y: 25 })
+dog instanceof Dog;
+// -> true
+dog instanceof Animal;
+// -> true
 
-// define a Game
-var Game = def({ ... })
+cat.speak();
+// -> 'I am Canela, the Cat'
 
-var game = new Game({
-	width: 800,
-	height: 600,
-	player: new Payer
-})
+```
+###Mixins
+Example inspired from (dgrid)[http://dgrid.io/]
+```javascript
+var Widget = def({ ... });
+var Grid = def(Widget, { ... });
 
-game.play()
+var Sortable = def({ ... });
+var Selectable = def({ ... });
+var Resizable = def({ ... });
 
-// Add enemies and food each 5s.
-setInterval(function() {
-	game.add(new Enemy)
-	game.add(new Mushroom)
-}, 5000)
+// Then we need a sortable grid
+var MySortableGrid = def(Grid, [Sortable]);
+
+// Then we need a sortable and selectable grid
+var MySortableAndResizable = def(Grid, [Sortable, Selectable]);
+
+// one grid
+var grid = new MySortableAndResizable({ ... });
+
+grid instanceof Grid; // -> true
+grid instanceof Widget; // -> true
+grid instanceof Sortable; // -> false
+grid instanceof Selectable; // -> false
+
+def.instanceOf(grid, Grid); // -> true
+def.instanceOf(grid, Widget); // -> true
+def.instanceOf(grid, Sortable); // -> true, because is Mixin
+def.instanceOf(grid, Selectable); // -> true, because is Mixin
+
+def.mixinOf(grid, Grid); // -> false
+def.mixinOf(grid, Widget); // -> false
+def.mixinOf(grid, Sortable); // -> true
+def.mixinOf(grid, Selectable); // -> true
 
 ```
 ##def.mixin
-Mixin **arg0** with **arg1**, then with *arg2* (if exits), etc.
+Mixin **arg0** with **arg1**, then with **arg2** (if exits), etc.
 
 Signature:
 ```javascript
@@ -200,6 +219,7 @@ def.mixin(object arg0 [, object arg1 [, ... ]]) -> object
 - ...
 
 The **arg0** object is mutated and returned.
+
 ##def.mixinOf
 Check if instance is mixin of Mixin.
 
@@ -211,20 +231,25 @@ def.mixinOf(object instance, function Mixin) -> bool
 - *function* **Mixin**
 
 ##def.instanceOf
-Check if instance is mixin of Mixin.
+Check if instance is instance or mixin of MixinOrClass.
 
 Signature:
 ```javascript
 def.instanceOf(object instance, function MixinOrClass) -> bool
 ```
 - *object* **instance**
+	- the object to check
+	- limitations: none
 - *function* **MixinOrClass**
+	- the constructor function
+	- limitations: none, can be a vanilla function.
 
 #Best  Practies & Tips
-- Use the conventional prefix `_` for private members. Example `_lastPosition: 5`.
-	We can over engineering this lib for have a real *private* concept, but
-	then we like some way for made reflection... so, [KISS](http://en.wikipedia.org/wiki/KISS_principle) is the better.
 - Feel free to use `def` with vanilla constructor functions and in library proyects. `def` just construct a vanilla constructor, so is not intrusive.
+- In CommonJS or AMD environment use one file per *Class*.
+- Use the conventional prefix `_` for private members. Example `_lastPosition: 5`.
+	We can over engineering this lib for have a *real* private concept, but
+	then we like some way for made reflection... so, [KISS](http://en.wikipedia.org/wiki/KISS_principle) is the better.
 - To define *static* properties add them to the constructor. i.e. `XHR = def(...); XHR.TYPE_OK = 1; XHR.TYPE_ERR = 0`.
 
 #TODO
@@ -232,7 +257,7 @@ def.instanceOf(object instance, function MixinOrClass) -> bool
 - [x] Writing the code.............100%
 - [x] Anecdotally Testing..........100%
 - [ ] Automated Testing on Travis..35%
-- [x] Documenting the API..........80%
+- [x] Documenting the API..........90%
 
 #LICENSE
 MIT LICENSE

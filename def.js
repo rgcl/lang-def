@@ -9,6 +9,9 @@
 	}
 }(this, function (nodeUtil) {
 
+	var id = 1;
+	var nameRegex = /^[\_\$a-z]([\_\$a-z0-9])*$/i;
+
 	// def([string name] [, function parent] [, array mixins] [, object props])
 	var def = function def(arg0, arg1, arg2, arg3) {
 		// 0. Normalize arguments
@@ -22,7 +25,7 @@
 	 		mixinProto;
 	 	props && (delete props.new);
 	 	// 1. Create the constructor
-	 	if(!name) {
+	 	if(!name || !nameRegex.test(name)) {
 	 		constructor = function AnonymousConstructor() {
 	 			if(!(this instanceof AnonymousConstructor)) {
 	 				throw new TypeError('use new AnonymousConstructor(...)');
@@ -39,6 +42,7 @@
 	 			'} new_.apply(this, arguments); }'))(new_);
 	 	}
 	 	constructor.mixins_ = {};
+	 	constructor.id_ = id++;
 	 	// 2. Inherits
 	 	if(args.parent) {
 	 		def.inherits(constructor, args.parent);
@@ -49,8 +53,8 @@
 	 		for(var key in mixinProto) {
 	 			proto[key] = mixinProto[key];
 	 		}
-	 		if(mixinProto.constructor.name) {
-	 			constructor.mixins_[mixinProto.constructor.name] = true;
+	 		if(mixin.id_) {
+	 			constructor.mixins_[mixin.id_] = true;
 	 		}
 	 	});
 	 	// 4. Mixin with props
@@ -106,10 +110,10 @@
 	}
 
 	def.mixinOf = function def_mixinOf(instance, Mixin) {
-		if(!instance._mixins_) {
+		if(!instance.constructor.mixins_) {
 			return false;
 		}
-		return !!instance.mixins_[Mixin.name];
+		return !!instance.constructor.mixins_[Mixin.id_];
 	};
 
 	def.instanceOf = function def_instanceOf(instance, ClassOrMixin) {
