@@ -74,7 +74,10 @@
 	 		}
 	 	};
 	 	constructor.prototype.getSuper = function (methodName) {
-	 		return this.constructor.prototype[methodName];
+	 		var super_ = this.constructor.super_;
+	 		if(super_) {
+	 			return super_.prototype[methodName];
+	 		};
 	 	};
 	 	// 6. Return!
 	 	return constructor;
