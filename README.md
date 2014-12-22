@@ -175,6 +175,8 @@ cat.speak();
 // -> 'I am Canela, the Cat'
 
 ```
+[`jsfiddle.net/spL1fvzc/1`](http://jsfiddle.net/spL1fvzc/1/)
+
 ###Mixins
 Example inspired from [dgrid](http://dgrid.io/)
 ```javascript
