@@ -122,13 +122,12 @@ def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ])
 	- especial members:
 		- *optional function* **new**: is the `constructor`.
 			- default: `function () { def.mixin(this, arguments); }`.
-		- (in each method) **this.super(string methodName [, array arguments])**:
-			- to invoke the parent method with the given arguments and return the results.
-		- (in each method) **this.getSuper(string methodName)**
-			- to return the method of the parent *Class*.
+		- (in each method) **this.fn(function Class [, string methodName])**:
+			- return the function `methodName` of `Class` in the `this` clausure.
+			parent method with the given arguments and return the results.
 	- limitations:
 		- Must not contain one of the follows special members: 
-		*mixins_*, *super_*, **super** and **getSuper**.
+		**mixins_**, **super_** and **fn**.
 
 #Examples
 ##A little Game Egine
@@ -148,13 +147,13 @@ var Animal = def({
 
 var Cat = def(Animal, {
 	speak: function() {
-		return this.super('speak') + ', the Cat';
+		return this.fn(Animal, 'speak') + ', the Cat';
 	}
 });
 
 var Dog = def(Animal, {
 	speak: function() {
-		return this.super('speak') + ', the Dog';
+		return this.fn(Animall, 'speak') + ', the Dog';
 	}
 });
 
@@ -260,7 +259,7 @@ def.instanceOf(object instance, function MixinOrClass) -> bool
 - [x] Experimenting................100%
 - [x] Writing the code.............100%
 - [x] Anecdotally Testing..........100%
-- [ ] Automated Testing on Travis..35%
+- [ ] Automated Testing on Travis..75%
 - [x] Documenting the API..........90%
 
 #LICENSE

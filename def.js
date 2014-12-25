@@ -1,3 +1,7 @@
+// lang-def
+// Copyright 2014 Sapienlab, Rodrigo Gonzalez
+// MIT LICENSE
+
 // wraper based on https://github.com/umdjs/umd/blob/master/returnExports.js
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
@@ -11,6 +15,7 @@
 
 	var id = 1;
 	var nameRegex = /^[\_\$a-z]([\_\$a-z0-9])*$/i;
+	var hasNativeBind = !!Function.prototype.bind;
 
 	// def([string name] [, function parent] [, array mixins] [, object props])
 	var def = function def(arg0, arg1, arg2, arg3) {
@@ -20,10 +25,11 @@
 			new_ = (props && props['new']) || function (props) { def.mixin(this, props); },
 			proto = {},
 			name = args.name,
+			parent = args.parent,
 	 		mixins = args.mixins,
 	 		constructor,
 	 		mixinProto;
-	 	props && (delete props.new);
+	 	//props && (delete props.new);
 	 	// 1. Create the constructor
 	 	if(!name || !nameRegex.test(name)) {
 	 		constructor = function AnonymousConstructor() {
@@ -44,8 +50,9 @@
 	 	constructor.mixins_ = {};
 	 	constructor.id_ = id++;
 	 	// 2. Inherits
-	 	if(args.parent) {
-	 		def.inherits(constructor, args.parent);
+	 	if(parent) {
+	 		def.inherits(constructor, parent);
+	 		constructor.super = parent.prototype;
 	 	}
 	 	// 3. Mixin with mixins
 	 	mixins.forEach(function (mixin) {
@@ -67,18 +74,18 @@
 	 	for(var keyProto in proto) {
 	 		constructor.prototype[keyProto] = proto[keyProto];
 	 	}
-	 	constructor.prototype.super = function (methodName, args) {
-	 		var method = this.getSuper(methodName);
-	 		if(method) {
-				return method.apply(this, args);
-	 		}
-	 	};
-	 	constructor.prototype.getSuper = function (methodName) {
-	 		var super_ = this.constructor.super_;
-	 		if(super_) {
-	 			return super_.prototype[methodName];
+	 	if(hasNativeBind) {
+	 		constructor.prototype.fn = function fn(Class, methodName) {
+	 			return Class.prototype[methodName].bind(this);
 	 		};
-	 	};
+	 	} else {
+			constructor.prototype.fn = function fn(Class, methodName) {
+				var me = this;
+	 			return function () {
+	 				return Class.prototype[methodName].apply(me, arguments);
+	 			}
+	 		};
+	 	}
 	 	// 6. Return!
 	 	return constructor;
 	};
