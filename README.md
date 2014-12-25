@@ -124,7 +124,6 @@ def([ string name ], [ function BaseClass ], [ array mixins ], [ object props ])
 			- default: `function () { def.mixin(this, arguments); }`.
 		- (in each method) **this.fn(function Class [, string methodName])**:
 			- return the function `methodName` of `Class` in the `this` clausure.
-			parent method with the given arguments and return the results.
 	- limitations:
 		- Must not contain one of the follows special members: 
 		**mixins_**, **super_** and **fn**.
